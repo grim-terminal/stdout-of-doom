@@ -6,9 +6,17 @@ from doom.parse import parse_lines
 from doom.report import render, summarize
 
 
+def positive_int(text: str) -> int:
+    value = int(text)
+    if value < 1:
+        raise argparse.ArgumentTypeError("must be at least 1")
+    return value
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="doom", description="Summarise a log file")
     parser.add_argument("logfile", help="path to the log file, or - for stdin")
+    parser.add_argument("--top", type=positive_int, help="show only the N most common errors")
     return parser
 
 
@@ -19,7 +27,7 @@ def main(argv=None) -> int:
     else:
         with open(args.logfile, encoding="utf-8") as f:
             levels, errors = summarize(parse_lines(f))
-    print(render(levels, errors))
+    print(render(levels, errors, top=args.top))
     return 0
 
 

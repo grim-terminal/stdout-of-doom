@@ -29,3 +29,14 @@ def test_render_lists_every_level_and_the_most_common_errors_first():
 def test_render_without_errors_has_no_error_section():
     levels, errors = summarize(entries(("INFO", "ok")))
     assert "errors:" not in render(levels, errors)
+
+
+def test_render_top_limits_the_error_section():
+    levels, errors = summarize(entries(("ERROR", "a"), ("ERROR", "b"), ("ERROR", "b"), ("ERROR", "c")))
+    out = render(levels, errors, top=1).splitlines()
+    assert out[out.index("errors:") + 1:] == ["     2  b"]
+
+
+def test_render_top_larger_than_the_errors_shows_them_all():
+    levels, errors = summarize(entries(("ERROR", "a"), ("ERROR", "b")))
+    assert len(render(levels, errors, top=10).splitlines()) == len(render(levels, errors).splitlines())
