@@ -15,12 +15,12 @@ def summarize(entries):
     return levels, errors
 
 
-def render(levels, errors) -> str:
+def render(levels, errors, top=None) -> str:
     lines = ["levels:"]
     for level in LEVELS:
         lines.append(f"  {level:<5} {levels[level]}")
     if errors:
         lines.append("errors:")
-        for message, count in errors.most_common():
+        for message, count in errors.most_common(top):
             lines.append(f"  {count:>4}  {message}")
     return "\n".join(lines)
